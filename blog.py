@@ -6,7 +6,7 @@ from functools import wraps
 import sqlite3
 
 #config
-DATABASE = 'email.db'
+DATABASE = '/Users/sheldon.smickley/scripts/apps/email.db'
 USERNAME = "admin"
 PASSWORD = "admin"
 SECRET_KEY = "\xe8\xc3\xf2\x85\x85d\x06\xeb\xa2\xb9x\xeaW\xba\x05\xb5\xc5\xbf\xbei\xac\xe6\xf0Z"
