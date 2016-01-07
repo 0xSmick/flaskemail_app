@@ -1,0 +1,26 @@
+{% extends "template.html" %}
+{% block content %}
+	<h2>Email Manager</h2>
+  <p><a href="/logout">Logout</a></p>
+    <h3>Add a new entry</h3>
+    <form action="{{ url_for('add') }}" method="post" class="add">
+      <label><strong>Company Name</strong></label>
+      <input name="company_name" type="text">
+      <label><strong>Email</strong></label>
+      <input name="email" type="text">
+      <label><strong>URL</strong></label>
+      <input name="url" type="text">
+      <input class="button" type="submit" value="Save">
+    </form>
+  <br/>
+  <br/>
+  <h3>DB Entries</h3>
+  {% for i in entries %}
+    <strong>Company Name:</strong> {{ i.company_name }} <br/>
+    <strong>Email</strong> {{ i.email }} <br/>
+    <strong>URL</strong> {{ i.url }} <br/>
+    <br/>
+    <br/>
+  {% endfor %}
+{% endblock %}
+
