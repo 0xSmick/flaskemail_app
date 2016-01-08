@@ -46,30 +46,55 @@ def login():
 @app.route('/add', methods=['POST'])
 @login_required
 def add():
-    company_name = request.form['company_name']
+    existing_company = request.form['existing_company']
     email = request.form['email']
-    url = request.form['url']
-    if not company_name or not email or not url:
+    if not email or not existing_company:
       flash("All fields are required. Please try again.")
       return redirect(url_for('main'))
     else:
       conn = sqlite3.connect(app.config['DATABASE'])
       c = conn.cursor()
-      c.execute('INSERT into emails (company_name, email, url) values (?, ?, ?)',
-        [request.form['company_name'], request.form['email'], request.form['url']])
-      new_id = c.lastrowid
+      url = c.execute("select url from emails where company_name like ?",(request.form['existing_company'],))
+      url = url.fetchall()[0][0]
+      c.execute('INSERT into emails (company_name, email, url) values (?, ?, ?)', (request.form['existing_company'], request.form['email'], url,))
+      new_id = c.lastrowid 
       conn.commit()
       conn.close()
       flash('New entry was posted')
       return redirect(url_for('main'))
 
+@app.route('/new_company', methods=['GET','POST'])
+@login_required
+def new_company():
+  if request.method == 'GET':
+    return render_template('new_company.html')
+  else:
+    company_name = request.form['company_name']
+    email = request.form['email']
+    url = request.form['url']
+    if not email or not company_name or not url:
+      flash("All fields are required. Please try again.")
+      return redirect(url_for('new_company'))
+    else:
+      conn = sqlite3.connect(app.config['DATABASE'])
+      c = conn.cursor()
+      c.execute('INSERT into emails (company_name, email, url) values (?, ?, ?)', (request.form['company_name'], request.form['email'], request.form['url'],))  
+      new_id = c.lastrowid
+      conn.commit()
+      conn.close()
+      flash("New entry was posted")
+      return redirect(url_for('main'))
+
 @app.route('/main')
 @login_required
 def main():
-  g.db = connect_db()
-  cur = g.db.execute('select * from emails')
+  conn = sqlite3.connect(app.config['DATABASE'])
+  c = conn.cursor()
+  cur = c.execute('select * from emails')
   entries = [dict(company_name=row[1], email=row[2], url=row[3]) for row in cur.fetchall()]
-  g.db.close()
+  cur = c.execute('select company_name from emails')
+  z = cur.fetchall()
+  conn.close()
   return render_template('main.html', entries=entries)
 
 @app.route('/logout')
@@ -77,8 +102,6 @@ def logout():
   session.pop('logged_in', None)
   flash('You were logged out')
   return redirect(url_for('login'))
-
-
 
 if __name__=="__main__":
 	app.run(debug=True)
