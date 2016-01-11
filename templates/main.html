@@ -19,12 +19,15 @@
   <br/>
   <br/>
   <h3>DB Entries</h3>
-  {% for i in entries %}
-    <strong>Company Name:</strong> {{ i.company_name }} <br/>
-    <strong>Email</strong> {{ i.email }} <br/>
-    <strong>URL</strong> {{ i.url }} <br/>
-    <br/>
-    <br/>
+  {% for comp in companies %} 
+    </br></br><strong>Company Name:</strong> {{ comp[0] }}
+    {% for i in entries %}
+      {% if comp[0].lower() in i['email'] %} </br>
+    <strong>Email:</strong> {{ i['email'] }} 
+    
+      {% endif %}
+    {% endfor %}
   {% endfor %}
+
 {% endblock %}
 

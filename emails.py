@@ -92,10 +92,12 @@ def main():
   c = conn.cursor()
   cur = c.execute('select * from emails')
   entries = [dict(company_name=row[1], email=row[2], url=row[3]) for row in cur.fetchall()]
-  cur = c.execute('select company_name from emails')
-  z = cur.fetchall()
+  cur = c.execute('select distinct company_name from emails')
+  companies = cur.fetchall()
+  cur = c.execute('select distinct url from emails')
+  url = cur.fetchall()
   conn.close()
-  return render_template('main.html', entries=entries)
+  return render_template('main.html', entries=entries, companies=companies, url=url)
 
 @app.route('/logout')
 def logout():
